@@ -1,0 +1,129 @@
+package ${package}.service;
+
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import ${package}.dao.${className}Dao;
+import ${package}.model.${className};
+
+@Service
+public class ${className}Service extends BaseService {
+
+    @Resource
+    private ${className}Dao ${classname}Dao;
+
+    /**
+     * 分页查询
+     * @param page page
+     * @param rows rows
+     * @param condiction condiction
+     */
+    public void findPage(Integer page, Integer rows, String sort, String order, Map<String, Object> condiction) {
+        PageBean<Map<String, Object>> pageBean = ${classname}Dao.findPage(page, rows, sort, order, condiction);
+        DatagridBean<Map<String, Object>> datagridBean = new DatagridBean<Map<String, Object>>(pageBean);
+        this.setResult(datagridBean);
+    }
+
+    /**
+     * 查询列表
+     * @param sort sort
+     * @param order order
+     * @param condiction condiction
+     */
+    public void findList(String sort, String order, Map<String, Object> condiction) {
+        List<Map<String, Object>> list = ${classname}Dao.findList(sort, order, condiction);
+        this.setResult(list);
+    }
+
+    /**
+     * 保存
+     * @param ${classname}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void save(${className} ${classname}) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        CurrentLoginUser currentLoginUser = this.getCurrentLoginUser();
+        #if($pk.attrType!='String')
+            if (${classname}.get${pk.attrName}() == null) {
+        #else
+            if (StringUtils.isBlank(${classname}.get${pk.attrName}())) {
+            ${classname}.set${pk.attrName}(UUID.randomUUID().toString());
+        #end
+
+        #foreach ($column in $columns)
+            #if($column.columnName=='ADD_TIME')
+                ${classname}.setAddTime(now);
+            #end
+            #if($column.columnName=='ADD_USER_ID')
+                ${classname}.setAddUserId(currentLoginUser.getUserId());
+            #end
+            #if($column.columnName=='LAST_OPERATE_USER_ID')
+                ${classname}.setLastOperateUserId(currentLoginUser.getUserId());
+            #end
+            #if($column.columnName=='LAST_OPERATE_TIME')
+                ${classname}.setLastOperateTime(now);
+            #end
+            #if($column.columnName=='IS_DELETE')
+                ${classname}.setIsDelete("0");
+            #end
+        #end
+        this.${classname}Dao.save(${classname});
+    }else{
+            Map<String, Object> ${classname}Map = this.objToMap(${classname});
+            #foreach ($column in $columns)
+                #if($column.columnName=='LAST_OPERATE_USER_ID')
+                        ${classname}Map.put("lastOperateUserId", currentLoginUser.getUserId());
+                #end
+                #if($column.columnName=='LAST_OPERATE_TIME')
+                        ${classname}Map.put("lastOperateTime", now);
+                #end
+                #if($column.columnName=='IS_DELETE')
+                        ${classname}Map.put("isDelete", "0");
+                #end
+            #end
+            this.${classname}Dao.update(${classname}Map);
+        }
+        this.setAttr("status", true);
+    }
+
+        /**
+         * 删除
+         * @param ${pk.attrname}s
+         */
+        @Transactional(rollbackFor = Exception.class)
+        public void del (String ${pk.attrname}s){
+            #if($pk.attrType!='String')
+                List<String> list = Arrays.asList(${pk.attrname}s.split(","));
+                List<${pk.attrType}> idArr = list.stream().map(o -> {
+                    return ${pk.attrType}.valueOf(o);
+                }).collect(Collectors.toList());
+            #else
+                List<String> idArr = Arrays.asList(${pk.attrname}s.split(","));
+            #end
+            this.${classname}Dao.logicDelByIds(idArr);
+            this.setAttr("status", true);
+        }
+
+        /**
+         * 获取单条
+         * @param ${pk.attrname}
+         */
+        public void findById (${pk.attrType} ${pk.attrname}) {
+            ${className} ${classname}=this.${classname}Dao.getById(${pk.attrname});
+            this.setAttr("status", true);
+            this.setAttr("data", ${classname});
+        }
+    }

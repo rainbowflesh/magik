@@ -1,0 +1,67 @@
+<style>
+    .layui-table .right {
+        text-align: right;
+    }
+
+    .layui-table td, .layui-table th {
+        border: none
+    }
+</style>
+
+<form id="${classname}DialogForm">
+    <input type="hidden" name="${pk.attrname}">
+    <table class="layui-table theme1">
+        #foreach($column in $columns)
+            #if(${column.columnName} != ${pk.columnName}&&${column.columnName}!='ADD_TIME'&&${column.columnName}!=
+                'LAST_OPERATE_TIME'&&${column.columnName}!='ADD_USER_ID'&&${column.columnName}!=
+                'LAST_OPERATE_USER_ID'&&${column.columnName}!='IS_DELETE')
+                <tr>
+                    <td class="right">${column.comments} :</td>
+                    <td>
+                        #if($column.attrType=='Date'||$column.attrType=="Timestamp")
+                            <input name="${column.attrname}" class="easyui-datebox">
+                        #else
+                            <input name="${column.attrname}" class="easyui-textbox">
+                        #end
+                    </td>
+                </tr>
+            #end
+        #end
+    </table>
+</form>
+<script type="text/javascript">
+    init({
+        model: "dialog",//id会自动注册到dj.model.dialog中，方便其它页面进行调用
+        data: {
+            formId: "#${classname}DialogForm",
+            url:{
+            	save:"${classname}"
+            }
+        },
+        methods: {
+            save: function (id) {
+                    var data = $(this.formId).serializeJson();
+                    var type = "post";
+                    if(id) type="put"
+                    new Ajax(this.url.save,data).request(type,function(res){
+                        $.dj.tip("操作成功");
+                        dj.model.list.query();
+                        $("#" + dj.model.list.dialogId).dialog("close");
+                    });
+            }
+        },
+        watch: {
+
+        },
+        mounted: function () {
+	        var self = this;
+            if (dj.model.list.editId) {
+            	new Ajax(this.url.save+"/"+dj.model.list.editId).get(function(res){
+                    $(self.formId).form("load", res.data);
+            	});
+            }
+        }
+    });
+
+
+</script>

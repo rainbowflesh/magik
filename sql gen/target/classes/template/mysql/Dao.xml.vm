@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${package}.dao.${className}Dao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="${package}.entity.${className}Entity" id="${classname}Map">
+        #foreach($column in $columns)
+            #if($column.attrname != 'att1' || $column.attrname != 'att2' || $column.attrname != 'att3')
+                <result property="${column.attrname}" column="${column.columnName}"/>
+            #end
+        #end
+    </resultMap>
+
+    <select id="queryObject" resultType="${package}.entity.${className}Entity">
+        select *
+        from ${tableName} where ${pk.columnName} = #{value} and ISDEL='0'
+    </select>
+
+    <select id="queryPage" resultType="${package}.entity.${className}Entity">
+        <choose>
+            <when test="limit != null and limit !=''">
+                select top ${limit} o.* from (select row_number() over (
+            </when>
+            <otherwise>
+                select top 10 o.* from (select row_number() over (
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order} ) as rownumber, * from (select * from ${tableName} where ISDEL='0'
+            </when>
+            <otherwise>
+                order by ${pk.columnName} asc ) as rownumber, * from (select * from ${tableName} where ISDEL='0'
+            </otherwise>
+        </choose>
+        #foreach($column in $columns)
+            #set($tmp1="%${")
+            #set($tmp2="}%")
+            #if($column.attrname != 'isdel' && $column.attrname != 'att1' && $column.attrname !=
+                'att2' && $column.attrname != 'att3')
+                <if test="$column.attrname != null and $column.attrname != ''">
+                    and ${column.columnName} like '$tmp1$column.attrname$tmp2'
+                </if>
+            #end
+        #end
+        <choose>
+            <when test="offset != null and offset != '' ">
+                ) as oo ) as o where rownumber > ${offset}
+            </when>
+            <otherwise>
+                ) as oo ) as o where rownumber > 0
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="queryList" resultType="${package}.entity.${className}Entity">
+        select * from ${tableName} where ISDEL='0'
+        #foreach($column in $columns)
+            #set($tmp1="%${")
+            #set($tmp2="}%")
+            #if($column.attrname != 'isdel' && $column.attrname != 'att1' && $column.attrname !=
+                'att2' && $column.attrname != 'att3')
+                <if test="$column.attrname != null and $column.attrname != ''">
+                    and ${column.columnName} like '$tmp1$column.attrname$tmp2'
+                </if>
+            #end
+        #end
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from ${tableName} where ISDEL='0'
+        #foreach($column in $columns)
+            #set($tmp1="%${")
+            #set($tmp2="}%")
+            #if($column.attrname != 'isdel' && $column.attrname != 'att1' && $column.attrname !=
+                'att2' && $column.attrname != 'att3')
+                <if test="$column.attrname != null and $column.attrname != ''">
+                    and ${column.columnName} like '$tmp1$column.attrname$tmp2'
+                </if>
+            #end
+        #end
+    </select>
+
+    <insert id="save" parameterType="${package}.entity.${className}Entity"#if($pk.extra == 'auto_increment')
+            useGeneratedKeys="true" keyProperty="$pk.attrname"#end>
+        insert into ${tableName}
+            (
+                #foreach($column in $columns)
+                    #if(($column.columnName != $pk.columnName || $pk.extra != 'auto_increment') && $column.attrname !=
+                        'att1' && $column.attrname != 'att2' && $column.attrname != 'att3')
+                        $column.columnName #if($velocityCount != $columns.size()), #end
+
+                    #end
+                #end
+            )
+            values
+        (
+            #foreach($column in $columns)
+                #if(($column.columnName != $pk.columnName || $pk.extra != 'auto_increment') && $column.attrname !=
+                    'att1' && $column.attrname != 'att2' && $column.attrname != 'att3' )
+                    #if($column.columnName == 'ISDEL')
+                        '0',
+                    #end
+                    #if($column.columnName != 'ISDEL')
+                            #{$column.attrname}#if($velocityCount != $columns.size()), #end
+
+                #end
+                #end
+            #end
+        )
+    </insert>
+
+    <update id="update" parameterType="${package}.entity.${className}Entity">
+        update ${tableName}
+        <set>
+            #foreach($column in $columns)
+                #if($column.columnName != $pk.columnName)
+                    #if($column.columnName != 'ISDEL' && $column.attrname != 'att1' && $column.attrname !=
+                        'att2' && $column.attrname != 'att3')
+                        <if test="$column.attrname != null">$column.columnName = #{$column.attrname
+                            }#if($velocityCount != $columns.size()), #end</if>
+                    #end
+                #end
+            #end
+        </set>
+        where ${pk.columnName} = #{${pk.attrname}} and ISDEL='0'
+    </update>
+
+    <delete id="delete">
+        update ${tableName} set ISDEL='1'
+        where ${pk.columnName} = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        update ${tableName} set ISDEL='1' where ${pk.columnName} in
+        <foreach item="${pk.attrname}" collection="array" open="(" separator="," close=")">
+            #{${pk.attrname}}
+        </foreach>
+    </delete>
+
+</mapper>

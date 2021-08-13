@@ -1,0 +1,22 @@
+/** mapbox样式封装 */
+.mapPopup.mapboxgl-popup{
+  .mapboxgl-popup-content{
+    width: 100%;height: 100%;background:none;padding:0px;
+  }
+  .mapboxgl-popup-tip{
+    display: none;
+  }
+}
+.mapPopup-text.mapboxgl-popup{
+  .mapboxgl-popup-content{
+    width: 100%;height: 100%;background:none;padding:0px;
+    color: #e4e6bd;font-size: 16px;
+  }
+  .mapboxgl-popup-tip{
+    display: none;
+  }
+}
+/** 解决尾迹线图层不能重复添加问题 */
+.echartMap{
+  position:absolute;
+}

@@ -1,0 +1,16 @@
+server:
+  port: 8088
+  servlet:
+    context-path: /
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&useSSL=false
+    username: root
+    password: root
+mybatis-plus:
+  mapper-locations: classpath:is/nijikawa/fozubaoyo/mapper/*.xml
+  type-aliases-package: is.nijikawa.fozubaoyo.model.
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
