@@ -13,18 +13,12 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * 代码生成器
- *
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2016年12月19日 下午3:33:38
  */
 @Service
 public class SysGeneratorService {
     @Autowired
     private mysql_SysGeneratorDao sysGeneratorDao;
 
-    //	private oracle_SysGeneratorDao sysGeneratorDao;
-//	private sqlserver_SysGeneratorDao sysGeneratorDao;
     public List<Map<String, Object>> queryList(Map<String, Object> map) {
         return sysGeneratorDao.queryList(map);
     }
@@ -39,14 +33,11 @@ public class SysGeneratorService {
 
     public List<Map<String, String>> queryColumns(String tableName) {
         return sysGeneratorDao.queryColumns(tableName);
-
-
     }
 
     public byte[] generatorCode(String[] tableNames) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
-
         for (String tableName : tableNames) {
             //查询表信息
             Map<String, String> table = queryTable(tableName);

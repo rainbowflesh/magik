@@ -14,7 +14,7 @@ public class Rexception extends HashMap<String, Object> {
     }
 
     public static Rexception error() {
-        return error(500, "未知异常，请联系管理员");
+        return error(500, "未知异常");
     }
 
     public static Rexception error(String msg) {

@@ -19,8 +19,7 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public ModelAndView resolveException(HttpServletRequest request,
-                                         HttpServletResponse response, Object handler, Exception ex) {
+    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         Rexception r = new Rexception();
         try {
             response.setContentType("application/json;charset=utf-8");
@@ -34,10 +33,8 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
             } else {
                 r = Rexception.error();
             }
-
             //记录异常日志
             logger.error(ex.getMessage(), ex);
-
             String json = JSON.toJSONString(r);
             response.getWriter().print(json);
         } catch (Exception e) {
