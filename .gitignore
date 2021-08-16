@@ -49,3 +49,7 @@ build/
 ### VS Code ###
 .vscode/
 .idea/
+*.xml
+*.xml
+*.xml
+.idea/compiler.xml
