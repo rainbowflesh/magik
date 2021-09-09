@@ -16,6 +16,35 @@
         </el-col>
       </el-row>
     </div>
+    <div class="日历">
+      <el-collapse :value="['dayReport']">
+        <el-collapse-item title="日期填报台账" name="dayReport">
+          <el-calendar id="calendar">
+            <template slot="dateCell" slot-scope="{ data }">
+              <div class="calendar-day">
+                {{ data.day.split("-").slice(1).join("-") }}
+              </div>
+              <p v-if="handleSelected(data.day) == 1">已填报</p>
+              <p v-else>
+                未填报
+                <br />
+                <a
+                  :class="data.isSelected ? 'is-selected' : ''"
+                  @click="
+                    $model.planSjjdfkZdgcxxjdrtjtbBaseEdit.handleEdit(
+                      'add',
+                      data.day
+                    )
+                  "
+                >
+                  {{ data.isSelected ? "填报" : "" }}
+                </a>
+              </p>
+            </template>
+          </el-calendar>
+        </el-collapse-item>
+      </el-collapse>
+    </div>
     <div id="liuhanHander">
       <ul class="liuhan_list">
         <li class="item" v-for="(n, index) in 1" :key="index">
@@ -98,13 +127,13 @@
 export default {
   data() {
     return {
-      currentDate: new Date()
+      currentDate: new Date(),
     };
   },
   name: "service",
   data() {
     return {
-      showIndex: null
+      showIndex: null,
     };
   },
   methods: {
@@ -113,8 +142,8 @@ export default {
     },
     hideCode() {
       this.showIndex = null;
-    }
+    },
   },
-  mounted: function() {}
+  mounted: function () {},
 };
 </script>
