@@ -121,6 +121,9 @@
   height: 90px;
   width: 160;
 }
+.is-selected {
+  color: #50da1a;
+}
 </style>
 
 <script>
@@ -137,6 +140,16 @@ export default {
     };
   },
   methods: {
+    handleSelected(day) {
+      let flag = 0;
+      console.log("动啊老铁");
+      this.records.forEach((item) => {
+        if (item.reportDate == day) {
+          flag = item.reportStatus;
+          return flag;
+        }
+      });
+    },
     showCode(index) {
       this.showIndex = index;
     },
