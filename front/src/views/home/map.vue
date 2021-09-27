@@ -22,7 +22,7 @@ export default {
     haveMapbox: function() {
       var mapboxgl = require("mapbox-gl/dist/mapbox-gl.js");
       mapboxgl.accessToken =
-        "pk.eyJ1IjoiaXMtcmFpbmJvdyIsImEiOiJja3JtdzQ3dGoxbzE0MnJ0ajhoZmtxZmI5In0.HOllaxHZ-tiy0K9sm40ETw";
+        "the TOKEN";
       var map = new mapboxgl.Map({
         container: "mapContainer",
         style: "mapbox://styles/mapbox/streets-v11"
