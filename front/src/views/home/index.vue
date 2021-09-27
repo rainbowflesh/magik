@@ -24,18 +24,13 @@
               <div class="calendar-day">
                 {{ data.day.split("-").slice(1).join("-") }}
               </div>
-              <p v-if="handleSelected(data.day) == 1">已填报</p>
-              <p v-else>
+              <p v-if="handleDate(data.day)" style="color: green">已填报</p>
+              <p v-else style="color: red">
                 未填报
                 <br />
                 <a
                   :class="data.isSelected ? 'is-selected' : ''"
-                  @click="
-                    $model.planSjjdfkZdgcxxjdrtjtbBaseEdit.handleEdit(
-                      'add',
-                      data.day
-                    )
-                  "
+                  @click="$model.我是编辑模块.handleEdit('add', data.day)"
                 >
                   {{ data.isSelected ? "填报" : "" }}
                 </a>
@@ -137,18 +132,33 @@ export default {
   data() {
     return {
       showIndex: null,
+      records: [
+        { reportDate: "2021-10-10" },
+        { reportDate: "2021-10-11" },
+        { reportDate: "2021-10-12" },
+      ],
     };
   },
   methods: {
-    handleSelected(day) {
-      let flag = 0;
-      console.log("动啊老铁");
+    handleDate(day) {
+      var flag = false;
       this.records.forEach((item) => {
-        if (item.reportDate == day) {
-          flag = item.reportStatus;
-          return flag;
+        const time = new Date(item.reportDate);
+        const year = time.getFullYear();
+        const month = time.getMonth() + 1;
+        const ri = time.getDate();
+        const thedate = `${this.addZero(year)}-${this.addZero(
+          month
+        )}-${this.addZero(ri)}`;
+        if (thedate == day) {
+          flag = true;
         }
       });
+      return flag;
+    },
+
+    addZero(v) {
+      return v < 10 ? "0" + v : v;
     },
     showCode(index) {
       this.showIndex = index;
